@@ -6,7 +6,8 @@
                     <div class="card-body">
                         <h4>DATA POST</h4>
                         <hr>
-                        <router-link :to="{name: 'post.create'}" class="btn btn-md btn-success">TAMBAH POST</router-link>
+                        <router-link :to="{ name: 'post.create' }" class="btn btn-md btn-success">TAMBAH POST
+                        </router-link>
 
                         <table class="table table-striped table-bordered mt-4">
                             <thead class="thead-dark">
@@ -21,8 +22,10 @@
                                     <td>{{ post.title }}</td>
                                     <td>{{ post.content }}</td>
                                     <td class="text-center">
-                                        <router-link :to="{name: 'post.edit', params:{id: post.id }}" class="btn btn-sm btn-primary mr-1">EDIT</router-link>
-                                        <button class="btn btn-sm btn-danger ml-1">DELETE</button>
+                                        <router-link :to="{ name: 'post.edit', params: { id: post.id } }"
+                                            class="btn btn-sm btn-primary mr-1">EDIT</router-link>
+                                        <button @click.prevent="postDelete(post.id)"
+                                            class="btn btn-sm btn-danger ml-1">DELETE</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -50,21 +53,36 @@ export default {
         onMounted(() => {
 
             //get API from Laravel Backend
-            axios.get('http://localhost:8000/api/post')
-            .then(response => {
-              
-              //assign state posts with response data
-              posts.value = response.data.data
+            axios.get('http://localhost:8000/api/posts')
+                .then(response => {
 
-            }).catch(error => {
-                console.log(error.response.data)
-            })
+                    //assign state posts with response data
+                    posts.value = response.data.data
+
+                }).catch(error => {
+                    console.log(error.response.data)
+                })
 
         })
 
         //return
         return {
-            posts
+            posts,
+            postDelete
+        }
+        function postDelete(id) {
+
+            //delete data post by ID
+            axios.delete(`http://localhost:8000/api/posts/${id}`)
+                .then(() => {
+
+                    //splice posts 
+                    posts.value.splice(posts.value.indexOf(id), 1);
+
+                }).catch(error => {
+                    console.log(error.response.data)
+                })
+
         }
 
     }
@@ -73,7 +91,7 @@ export default {
 </script>
 
 <style>
-    body{
-        background: lightgray;
-    }
+body {
+    background: #AE7978;
+}
 </style>
